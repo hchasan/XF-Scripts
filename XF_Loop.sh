@@ -26,7 +26,7 @@ mkdir $RunName
 cd $RunName
 mkdir plots
 
-cd $WorkingDir
+cd "$WorkingDir"
 #./Evolved_Dipole --start
 #./handflail --start
 ./Roulette_Select --start
@@ -70,7 +70,7 @@ echo
 echo "Resuming..."
 echo
 
-cd $WorkingDir
+cd "$WorkingDir"
 cd data
 InputFiles=
 for i in {1..5}
@@ -78,11 +78,11 @@ do
     InputFiles="${InputFiles}${i}.uan "
 done
 ./makehandshook $InputFiles
-mv handshook.csv $WorkingDir
-cd $WorkingDir
+mv handshook.csv "$WorkingDir"
+cd "$WorkingDir"
 
 ## make plots
-cd $WorkingDir
+cd "$WorkingDir"
 ./gensData.exe
 for i in {1..5}
 do
@@ -94,13 +94,13 @@ done
 python plotLR.py
 #python PlotGainPat.py
 
-mv Length.png $WorkingDir/hands/$RunName
-mv Radius.png $WorkingDir/hands/$RunName
+mv Length.png "$WorkingDir"/hands/$RunName/plots
+mv Radius.png "$WorkingDir"/hands/$RunName/plots
 
 for i in {1..5}
 do
-    mv ${i}uan.csv $WorkingDir/hands/$RunName/plots/0_${i}uan.csv
-#    mv ${i}uan.png $WorkingDir/hands/$RunName/plots/0_${i}uan.png
+    mv ${i}uan.csv "$WorkingDir"/hands/$RunName/plots/0_${i}uan.csv
+#    mv ${i}uan.png "$WorkingDir"/hands/$RunName/plots/0_${i}uan.png
 done
 
 cp handshook.csv hands/$RunName/0_handshook.csv
@@ -108,30 +108,13 @@ cp handshook.csv hands/$RunName/0_handshook.csv
 #for ((gen=1; gen<=$TotalGens; gen++))          # use for fixed number of generations
 while [ `cat watch.txt` -eq 0 ]                # use for runs until convergence
 do
-    cd $WorkingDir
+    cd "$WorkingDir"
     #./Evolved_Dipole --cont
     #./handflail --cont
     ./Roulette_Select --cont
 
     cp handshake.csv hands/$RunName/${gen}_handshake.csv
     
-    ###
-    cd $ScriptsDir
-    rm output.xmacro
-    cd $WorkingDir
-    cd data
-    for i in {1..5}
-    do
-	echo "$line1" >> $ScriptsDir/output.xmacro
-	echo "$line2" >> $ScriptsDir/output.xmacro
-	echo "$line3" >> $ScriptsDir/output.xmacro
-	echo "$line4"'"00000'"$i"'";'>> $ScriptsDir/output.xmacro
-	cat outputmacroskeleton.txt >> $ScriptsDir/output.xmacro
-	echo "${lastline}${i}"'.uan");' >> $ScriptsDir/output.xmacro
-	done
-    ###
-
-
 
 #    let simID=$(( $gen*5+1 ))
 #    #### FIX NUMBERS SO THEY MATCH SIMULATION ID ####
@@ -174,7 +157,7 @@ do
     echo
 
 
-    cd $WorkingDir
+    cd "$WorkingDir"
     cd data
     InputFiles=
     for i in {1..5}
@@ -182,12 +165,12 @@ do
 	InputFiles="${InputFiles}${i}.uan "
     done
     ./makehandshook $InputFiles
-    mv handshook.csv $WorkingDir
-    cd $WorkingDir
+    mv handshook.csv "$WorkingDir"
+    cd "$WorkingDir"
 
 
     ## make plots
-    cd $WorkingDir
+    cd "$WorkingDir"
     ./gensData.exe
     for i in {1..5}
     do
@@ -199,17 +182,17 @@ do
     python plotLR.py
     #python PlotGainPat.py
 
-    mv Length.png $WorkingDir/hands/$RunName
-    mv Radius.png $WorkingDir/hands/$RunName
+    mv Length.png "$WorkingDir"/hands/$RunName
+    mv Radius.png "$WorkingDir"/hands/$RunName
 
     for i in {1..5}
     do
-	mv ${i}uan.csv $WorkingDir/hands/$RunName/plots/${gen}_${i}uan.csv
-#	mv ${i}uan.png $WorkingDir/hands/$RunName/plots/${gen}_${i}uan.png
+	mv ${i}uan.csv "$WorkingDir"/hands/$RunName/plots/${gen}_${i}uan.csv
+#	mv ${i}uan.png "$WorkingDir"/hands/$RunName/plots/${gen}_${i}uan.png
     done
 
     
-#    cd $WorkingDir
+#    cd "$WorkingDir"
 #    cd data
 #    InputFiles=
 #    for((ID=1; ID<=5; ID++))
@@ -217,8 +200,8 @@ do
 #	InputFiles=${InputFiles}${ID}'.uan '
 #    done
 #    ./makehandshook $InputFiles
-#    mv handshook.csv $WorkingDir
-#    cd $WorkingDir
+#    mv handshook.csv "$WorkingDir"
+#    cd "$WorkingDir"
     
     cp handshook.csv hands/$RunName/${gen}_handshook.csv
     
