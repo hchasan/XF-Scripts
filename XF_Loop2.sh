@@ -3,7 +3,7 @@
 #Created on 12/06/2017
 #Hannah Hasan
 
-RunName='handspin'                ## Replace when needed
+RunName='ConvergenceMaybe'                ## Replace when needed
 WorkingDir=`pwd`
 ScriptsDir=$WorkingDir/../Xmacros2
 XFexec='/mnt/c/Users/Hannah/Documents/Research/XF/bin/Win64.NET2010'  ##Location of XFUI executable
@@ -28,8 +28,9 @@ mkdir plots
 
 cd $WorkingDir
 #./Evolved_Dipole --start
-./handflail --start
-#./Roulette_Select --start
+#./handflail --start
+./Roulette_Select --start
+
 cp handshake.csv hands/$RunName/0_handshake.csv
 
 cd data
@@ -98,12 +99,13 @@ done
 
 cp handshook.csv hands/$RunName/0_handshook.csv
 
-for ((gen=1; gen<=$TotalGens; gen++))
+#for ((gen=1; gen<=$TotalGens; gen++))          # use for fixed number of generations
+while [ `cat watch.txt` -eq 0 ]                # use for runs until convergence
 do
     cd $WorkingDir
     #./Evolved_Dipole --cont
-    ./handflail --cont
-    #./Roulette_Select --cont
+    #./handflail --cont
+    ./Roulette_Select --cont
 
     cp handshake.csv hands/$RunName/${gen}_handshake.csv
     

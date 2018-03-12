@@ -1,6 +1,5 @@
 /*
   A selection program that uses roulette-based selection on a generation of dipole antennas. Can replace Evolved_Dipole
-
   By Hannah Hasan
   02/17/2018
 */
@@ -26,6 +25,7 @@ const double DEFAULT_R_MEAN = 0.5;
 const double DEFAULT_R_STDEV = 0.25;
 const double DEFAULT_L_MEAN = 0.5;
 const double DEFAULT_L_STDEV = 0.25;
+const double L_CONV_THRESHOLD = 0.05;                                     // length convergence threshold
 
 void Mutate(double* radii, double* lengths, double R_mean, double R_stdev, double L_mean, double L_stdev){
   default_random_engine generator;
@@ -54,7 +54,7 @@ void ReadHShake(char* filename, ifstream& ifs, string* arr, double* radii, doubl
   string Len;
   double radius = 0.0;
   double length = 0.0;
-  
+
   ifs.open(file.c_str());
   if(!ifs.is_open()) cout << endl << "Error! File could not be opened" << endl << endl;
   else{
@@ -74,14 +74,14 @@ void ReadHShake(char* filename, ifstream& ifs, string* arr, double* radii, doubl
     length = atof(Len.c_str());
     radii[L-8] = radius;
     lengths[L-8] = length;
-  }  
+  }
 }
 
 void ReadHShook(char* filename, ifstream& ifs, string* arr, double* scores){  // reads handshook and stores fitness scores
 
   string file = filename;
   double score = 0;
-  
+
   ifs.open(file.c_str());
   if(!ifs.is_open()) cout << endl << "Error! File could not be opened" << endl << endl;
   else{
@@ -162,6 +162,7 @@ void WriteHShake(ofstream& ofs, double* radii, double* lengths, double R_mean, d
   for(int p=0; p<NPOP; p++){
     ofs << radii[p] << "," << lengths[p] << endl;
   }
+  ofs.close();
 }
 
 int main(int argc, char** argv){
@@ -172,91 +173,111 @@ int main(int argc, char** argv){
   double *Radii = NULL;
   double *Lengths = NULL;
   char handshakename[] = "handshake.csv";
-  
+
   //variables for reading in handshook.csv
   ifstream shook;
   string *HShookLines = NULL;
   double *Fitness = NULL;
   char handshookname[] = "handshook.csv";
 
+  //best individual
+  double *Best = NULL;
+  
   //variables for writing new handshake.csv
   ofstream newshake;
-  
+
   if(string(argv[1]) == "--start"){
     Radii = new double[NPOP];
     Lengths = new double[NPOP];
 
-    double *Best = NULL;
     Best = new double[3];
     Best[0]= -42.0; Best[1]=0.0; Best[2]=0.0;
     Mutate(Radii, Lengths, DEFAULT_R_MEAN, DEFAULT_R_STDEV, DEFAULT_L_MEAN, DEFAULT_L_STDEV);
 
     //error checking
     //for(int q=0; q<NPOP; q++) cout << Radii[q] << "," << Lengths[q] << endl;
-    
+
     WriteHShake(newshake, Radii, Lengths, DEFAULT_R_MEAN, DEFAULT_R_STDEV, DEFAULT_L_MEAN, DEFAULT_L_STDEV, Best);
   }
 
   else if(string(argv[1]) == "--cont"){
-      // generation's best antenna
-      double *Best = NULL; 
-  
-      // Arrays for the selected parents
-      double ParentR[NPOP];
-      double ParentL[NPOP];
-  
-      // Array for new individuals
-      double newGen[NPOP][NPOP];
-  
-      HShakeLines = new string[HSHAKELINES];
-      Radii = new double[NPOP];
-      Lengths = new double[NPOP];
 
-      // store radii and lengths of this generations
-      ReadHShake(handshakename, shake, HShakeLines, Radii, Lengths);
+    // Arrays for the selected parents
+    double ParentR[NPOP];
+    double ParentL[NPOP];
 
-      // just a check to make sure R,Ls stored properly
-      //for(int i=0; i<NPOP; i++) cout << Radii[i] << " " << Lengths[i] << endl;
-  
-      HShookLines = new string[HSHOOKLINES];
-      Fitness = new double[NPOP];
-      
-      // store fitness scores
-      ReadHShook(handshookname, shook, HShookLines, Fitness);  
+    // Array for new individuals
+    double newGen[NPOP][NPOP];
 
-      // just a check to make sure fitness stored properly
-      //for(int j=0; j<NPOP; j++) cout << Fitness[j] << endl;
+    HShakeLines = new string[HSHAKELINES];
+    Radii = new double[NPOP];
+    Lengths = new double[NPOP];
 
-      Best = new double[3];
-      FindBest(Fitness, Radii, Lengths, Best);
+    // store radii and lengths of this generations
+    ReadHShake(handshakename, shake, HShakeLines, Radii, Lengths);
 
-      // just a check to make sure the best individual is stored correctly
-      //for(int k=0; k<3; k++) cout << Best[k] << endl;
+    // just a check to make sure R,Ls stored properly
+    //for(int i=0; i<NPOP; i++) cout << Radii[i] << " " << Lengths[i] << endl;
 
-      //Compute sum of the scaled-up fitness scores. Will be passed to Roulette function
-      double sumfit=0;
-      for(int f=0; f<NPOP; f++) sumfit+=Fitness[f];
+    HShookLines = new string[HSHOOKLINES];
+    Fitness = new double[NPOP];
 
-      int selected;
-      for(int n=0; n<NPOP; n++){
-	selected = Roulette(Fitness, Radii, Lengths, sumfit, n);
-	ParentR[n]=Radii[selected];
-	ParentL[n]=Lengths[selected];
-	}
-      
-      double rstdev=STDEV(ParentR);
-      double lstdev=STDEV(ParentL);
-      double rmean=0;
-      double lmean=0;
-      for(int a=0; a<NPOP; a++){
-	rmean += ParentR[a]/NPOP;
-	lmean += ParentL[a]/NPOP;
-      }
-      Mutate(ParentR, ParentL, rmean, rstdev, lmean, lstdev);
-      //find best individual
-      
-      WriteHShake(newshake, ParentR, ParentL, rmean, rstdev, lmean, lstdev, Best);
+    // store fitness scores
+    ReadHShook(handshookname, shook, HShookLines, Fitness);
+
+    // just a check to make sure fitness stored properly
+    //for(int j=0; j<NPOP; j++) cout << Fitness[j] << endl;
+
+    Best = new double[3];
+    FindBest(Fitness, Radii, Lengths, Best);
+
+    // just a check to make sure the best individual is stored correctly
+    //for(int k=0; k<3; k++) cout << Best[k] << endl;
+
+    //Compute sum of the scaled-up fitness scores. Will be passed to Roulette function
+    double sumfit=0;
+    for(int f=0; f<NPOP; f++) sumfit+=Fitness[f];
+
+    int selected;
+    for(int n=0; n<NPOP; n++){
+      selected = Roulette(Fitness, Radii, Lengths, sumfit, n);
+      ParentR[n]=Radii[selected];
+      ParentL[n]=Lengths[selected];
     }
 
-    return 0;
+    double rstdev=STDEV(ParentR);
+    double lstdev=STDEV(ParentL);
+    double rmean=0;
+    double lmean=0;
+    for(int a=0; a<NPOP; a++){
+      rmean += ParentR[a]/NPOP;
+      lmean += ParentL[a]/NPOP;
+    }
+    Mutate(ParentR, ParentL, rmean, rstdev, lmean, lstdev);
+    //find best individual
+
+    WriteHShake(newshake, ParentR, ParentL, rmean, rstdev, lmean, lstdev, Best);
+
+    if(lstdev<L_CONV_THRESHOLD){
+      ofstream watch;
+      watch.open("watch.txt");
+      watch << "1" << endl;
+      watch.close();
+    }
+  }
+
+  delete [] HShakeLines;
+  HShakeLines = NULL;
+  delete [] Radii;
+  Radii = NULL;
+  delete [] Lengths;
+  Lengths = NULL;
+  delete [] HShookLines;
+  HShookLines = NULL;
+  delete [] Fitness;
+  Fitness = NULL;
+  delete [] Best;
+  Best = NULL;
+  
+  return 0;
 }
