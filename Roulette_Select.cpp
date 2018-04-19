@@ -10,7 +10,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-#include <ctime>                                                          // in case we want to use time as seed for random number generator. For now using SEED (below)
+#include <ctime>  
 #include <iomanip>
 #include <random>
 
@@ -23,8 +23,8 @@ const int HSHAKELINES = NPOP+8;                                           // num
 const int HSHOOKLINES = NPOP+2;                                           // number of lines in handshook file
 const double DEFAULT_R_MEAN = 0.5;
 const double DEFAULT_R_STDEV = 0.25;
-const double DEFAULT_L_MEAN = 0.5;
-const double DEFAULT_L_STDEV = 0.25;
+const double DEFAULT_L_MEAN = 20.0;
+const double DEFAULT_L_STDEV = 5.0;
 const double L_CONV_THRESHOLD = 0.05;                                     // length convergence threshold
 
 void Mutate(double* radii, double* lengths, double R_mean, double R_stdev, double L_mean, double L_stdev){
