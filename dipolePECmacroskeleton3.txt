@@ -1,0 +1,12 @@
+       var dipoleLength = lengths[i];
+	//var dipoleRadius = lengths[i]/10;
+        var dipoleRadius = radii[i];
+	//Actually create the material and then the dipole
+        CreatePEC();
+        CreateDipole();
+        CreateAntennaSource();
+        CreateGrid();
+        CreateSensors();
+        CreateAntennaSimulationData();
+        QueueSimulation();
+}
