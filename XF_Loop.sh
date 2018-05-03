@@ -6,7 +6,7 @@
 
 ####### LINES TO CHECK OVER WHEN STARTING A NEW RUN #######
 
-RunName='ED_varyR_m1-0'                ## Replace when needed
+RunName='FromAbove2'                ## Replace when needed
 TotalGens=10   ## number of generations (after initial) to run through
 NPOP=5       ## number of individuals per generation; please keep this value below 99
 
@@ -82,7 +82,7 @@ echo 'var gridSize= '`cat handsize.txt` >> $XmacrosDir/dipole_PEC.xmacro
 cd data
 cat dipolePECmacroskeleton2.txt >> $XmacrosDir/dipole_PEC.xmacro
 echo 'for(var i = 0;i < '"$NPOP"';i++){' >> $XmacrosDir/dipole_PEC.xmacro
-cat dipolePECmacroskeleton2.txt >> $XmacrosDir/dipole_PEC.xmacro
+cat dipolePECmacroskeleton3.txt >> $XmacrosDir/dipole_PEC.xmacro
 
 
 echo
@@ -181,7 +181,7 @@ for ((gen=1; gen<=$TotalGens; gen++)); do                                 # use 
     cd data
     cat dipolePECmacroskeleton2.txt >> $XmacrosDir/dipole_PEC.xmacro
     echo 'for(var i = 0;i < '"$NPOP"';i++){' >> $XmacrosDir/dipole_PEC.xmacro
-    cat dipolePECmacroskeleton2.txt >> $XmacrosDir/dipole_PEC.xmacro
+    cat dipolePECmacroskeleton3.txt >> $XmacrosDir/dipole_PEC.xmacro
     
     cd $XFexec
     cd $XFProj
