@@ -16,7 +16,12 @@ using namespace std;
 
 const int NVAR=2; //number of variables (r and l)
 const int NPOP=5; //size of population
-
+const double RMEAN = 4.0;
+const double LMEAN = 50.0;
+const double RSTDEV = 2.0;
+const double LSTDEV = 10.0;
+const double q = .9; //factor to adjust search radius by
+const double p = .2; //ratio of samples that must be correct to adjust search radius
 
 double rand_normal(double mean, double stddev)
 {//Box muller method to generate normal numbers
@@ -245,13 +250,13 @@ void CheckConvergence(int numSuccess, double p, double q, double d[]){
 
 
 int main(int argc, char** argv) {
-    double m[NVAR]={.5,.5}; //mean values of r and l
+  double m[NVAR]={RMEAN,LMEAN/*.1,1.0*/}; //mean values of r and l
     double x[NPOP][NVAR]; //produced value of r and l
-    double d[NVAR] = {.25,.25}; //standard deviation vector
+    double d[NVAR] = {RSTDEV,LSTDEV/*.05,.5*/}; //standard deviation vector
     double best[NVAR+1]={-40,0,0}; //array to store param values and output score of top antenna {fit_score,r,l}
     double output[NPOP]; //array to store scores of each generations
-    double q = .9; //factor to adjust search radius by
-    double p = .2; //ratio of samples that must be correct to adjust search radius
+    //double q = .9; //factor to adjust search radius by
+    //double p = .2; //ratio of samples that must be correct to adjust search radius
     int numSuccess; //number of samples that improve on the best value
     srand(time(0));
     
@@ -267,6 +272,10 @@ int main(int argc, char** argv) {
 	    GenerateSample(x,m,d,i); //Generate NPOP samples
 	  }
 	Simulation(x, output, m, d, best); // Write current population to disk as well as mean,deviations and best population
+	ofstream handsize;
+	handsize.open("handsize.txt");
+	handsize << m[1]/50.0 << ";";
+	handsize.close();
       }
       else if(string(argv[1]) == "--cont")
         {
@@ -289,6 +298,10 @@ int main(int argc, char** argv) {
 	      GenerateSample(x,m,d,i);
 	    }
 	  Simulation(x, output, m, d, best);
+	  ofstream handsize;
+	  handsize.open("handsize.txt");
+	  handsize << m[1]/50.0 << ";";
+	  handsize.close();
         }
       else
         {
