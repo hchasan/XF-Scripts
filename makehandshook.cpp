@@ -21,7 +21,7 @@ using namespace std;
 
 const bool PROXY = true;
 //const bool PROXY = false;
-const int NPOP = 10;                            // individuals in each generation
+const int NPOP = 5;                            // individuals in each generation
 const int NVALS = 6;                           // number of values given for each theta, phi coordinate in uan data file
 const int THETA_INCR = 15;                     // theta step value for the simulation
 const int PHI_INCR = 15;                       // phi step value for the simulation
