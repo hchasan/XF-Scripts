@@ -147,9 +147,14 @@ for ((gen=1; gen<=$TotalGens; gen++)); do                                 # use 
 #gen=0; while [ `cat highfive.txt` -eq 0 ]; do (( gen++ ))                 # use for runs until convergence
 
     cd "$WorkingDir"
+
+    ##### Select ONE evolution program #####
+
     ./Evolved_Dipole.exe --cont
     #./handflail.exe --cont
     #./Roulette_Select.exe --cont
+
+    ########################################
 
     cp handshake.csv hands/$RunName/${gen}_handshake.csv
     
@@ -258,7 +263,15 @@ for ((gen=1; gen<=$TotalGens; gen++)); do                                 # use 
 done
 
 cd "$WorkingDir"
+
+##### Select ONE evolution program #####
+
 ./Evolved_Dipole.exe --cont
+#./handflail.exe --cont
+#./Roulette_Select.exe --cont
+
+########################################
+
 cp handshake.csv "$WorkingDir"/hands/$RunName/GoodbyeWave.csv
 cp gensData.csv "$WorkingDir"/hands/$RunName/
 
